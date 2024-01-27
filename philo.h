@@ -9,6 +9,17 @@ typedef struct s_philo
 	pthread_t *thread;
 }	t_philo;
 
-int	ft_atoi(char *str);
+typedef struct s_table
+{
+	int		death_time;
+	int 	eating_time;
+	int 	sleeping_time;
+	int		p_count;
+	int 	eating_count;
+	t_philo **philo;
+}	t_table;
+
+int		ft_atoi(char *str);
+void	error_msg(char *str);
 
 #endif

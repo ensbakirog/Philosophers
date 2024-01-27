@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 int	ft_atoi(char *str)
 {
 	int		i;
@@ -25,4 +27,20 @@ int	ft_atoi(char *str)
 	if ((num > 2147483648 && sign == -1) || (num > 2147483647 && sign == 1))
 		return (-1);
 	return (num * sign);
+}
+
+int	ft_strlen(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+void	error_msg(char *str)
+{
+	write (2, "Error\n", 6);
+	write (2, str, ft_strlen(str));
+	write (2, "\n", 1);
 }
