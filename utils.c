@@ -1,4 +1,21 @@
 #include <unistd.h>
+#include "philo.h"
+#include <stdlib.h>
+
+int	check_all(char **av, int count)
+{
+	if (ft_atoi(av[0]) < 1)
+		return (-1);
+	else if (ft_atoi(av[1]) < 0)
+		return (-1);
+	else if (ft_atoi(av[2]) < 0)
+		return (-1);
+	else if (ft_atoi(av[3]) < 0)
+		return (-1);
+	else if (count == 5 && ft_atoi(av[4]) < 0)
+		return (-1);
+	return (0);
+}
 
 int	ft_atoi(char *str)
 {
@@ -38,8 +55,19 @@ int	ft_strlen(char *str)
 		i++;
 	return (i);
 }
-void	error_msg(char *str)
+
+void	error_free(char *str, t_table *tab)
 {
+	int i;
+
+	i = -1;
+	while (++i < tab->p_count)
+	{
+		if (tab->philo[i])
+			free(tab->philo[i]);
+	}
+	if (tab->philo)
+		free(tab->philo);
 	write (2, "Error\n", 6);
 	write (2, str, ft_strlen(str));
 	write (2, "\n", 1);

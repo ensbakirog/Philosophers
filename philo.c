@@ -1,78 +1,70 @@
 #include <unistd.h>
 #include "philo.h"
 #include <stdlib.h>
+#include <stdio.h> // ! Change it after
+#include <sys/time.h>
 
-void	free_table(t_table *table)
+void * _Nullable life_loop()
 {
-	int i;
+	printf("Merhaba Enes\n");
+	sleep(1);
+	return (NULL);
+}
 
-	i = -1;
-	while (++i < table->p_count)
-	{
-		if (table->philo[i] != NULL)
-			free(table->philo[i]);
-	}
-	if (table->philo != NULL)
-		free(table->philo);
+int	get_time(t_table *tab)
+{
+	if (gettimeofday(&tab->time, NULL) != 0)
+		return (error_free("Time error", tab), -1); 
+	tab->time.tv_sec *= 1000;
+	return (0);
 }
 
 
-int create_philo(t_table *table)
+int create_philo(t_table *tab)
 {
 	int i;
 
 	i = -1;
-	table->philo = (t_philo **)malloc(sizeof(t_philo *) * table->p_count);
-	if (table->philo == NULL)
-		return (free_table(table), -1);
-	while (++i < table->p_count)
+	tab->philo = (t_philo **)malloc(sizeof(t_philo *) * tab->p_count);
+	if (tab->philo == NULL)
+		return (error_free("Malloc error", tab), -1);
+	while (++i < tab->p_count)
 	{
-		table->philo[i] = (t_philo *)malloc(sizeof(t_philo));
-		if (table->philo[i] == NULL)
-			return (free_table(table), -1);
-		table->philo[i]->philo_id = i + 1;
+		tab->philo[i] = (t_philo *)malloc(sizeof(t_philo));
+		if (tab->philo[i] == NULL)
+			return (error_free("Malloc error", tab), -1);
+		tab->philo[i]->philo_id = i + 1;
+		if (pthread_create(&tab->philo[i]->thread, NULL, &life_loop, NULL) != 0)
+			return (error_free("Pthread create", tab), -1);
+		if (pthread_join(tab->philo[i]->thread, NULL) != 0)
+			return (error_free("Pthread join", tab), -1);
 	}
 	return (0);
 }
 
-void	assign_arg(char **av, int count, t_table *table)
+void	assign_arg(char **av, int count, t_table *tab)
 {
-	table->p_count = ft_atoi(av[0]);
-	table->death_time = ft_atoi(av[1]);
-	table->eating_time = ft_atoi(av[2]);
-	table->sleeping_time = ft_atoi(av[3]);
+	tab->p_count = ft_atoi(av[0]);
+	tab->death_time = ft_atoi(av[1]);
+	tab->eating_time = ft_atoi(av[2]);
+	tab->sleeping_time = ft_atoi(av[3]);
 	if (count == 5)
-		table->eating_count = ft_atoi(av[4]);
-}
-
-int	check_all(char **av, int count)
-{
-	if (ft_atoi(av[0]) < 1)
-		return (-1);
-	else if (ft_atoi(av[1]) < 0)
-		return (-1);
-	else if (ft_atoi(av[2]) < 0)
-		return (-1);
-	else if (ft_atoi(av[3]) < 0)
-		return (-1);
-	else if (count == 5 && ft_atoi(av[4]) < 0)
-		return (-1);
-	return (0);
+		tab->eating_count = ft_atoi(av[4]);
 }
 
 int	main(int ac, char **av)
 {
-	t_table table;
+	t_table tab;
 
 	if (ac == 5 || ac == 6)
 	{
 		av++;
 		if (check_all(av, ac - 1) == -1)
-			return (error_msg("Wrong argument"), 1);
-		assign_arg(av, ac - 1, &table);
-		if (create_philo(&table) == -1)
-			return(error_msg("Malloc error"), 1);
+			return (error_free("Wrong argument", &tab), 1);
+		assign_arg(av, ac - 1, &tab);
+		if (create_philo(&tab) == -1)
+			return(1);
 		return (0);
 	}
-	return (error_msg("Invalid argument"), 1);
+	return (error_free("Invalid argument", &tab), 1);
 }
