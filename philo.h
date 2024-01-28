@@ -19,6 +19,7 @@ typedef struct s_table
 	int 	sleeping_time;
 	int		p_count;
 	int 	eating_count;
+	int		last_id;
 	t_philo **philo;
 	pthread_mutex_t mutex;
 	struct timeval time;

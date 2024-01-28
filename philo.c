@@ -1,22 +1,33 @@
 #include <unistd.h>
 #include "philo.h"
 #include <stdlib.h>
-#include <stdio.h> // ! Change it after
 #include <sys/time.h>
+#include <stdio.h>
 
-void * _Nullable life_loop()
+long	get_time(t_table *tab);
+
+void	is_sleeping(t_table *tab)
 {
-	printf("Merhaba Enes\n");
-	sleep(1);
+	long	time;
+
+	time = get_time(tab);
+	printf("%ld %d is sleeping\n", time, tab->last_id);
+	usleep(tab->sleeping_time);
+}
+
+void * life_loop(void *arg)
+{
+	is_sleeping(arg);
 	return (NULL);
 }
 
-int	get_time(t_table *tab)
+long	get_time(t_table *tab)
 {
+	long time;
 	if (gettimeofday(&tab->time, NULL) != 0)
 		return (error_free("Time error", tab), -1); 
-	tab->time.tv_sec *= 1000;
-	return (0);
+	time = tab->time.tv_sec;
+	return (time);
 }
 
 
@@ -34,7 +45,8 @@ int create_philo(t_table *tab)
 		if (tab->philo[i] == NULL)
 			return (error_free("Malloc error", tab), -1);
 		tab->philo[i]->philo_id = i + 1;
-		if (pthread_create(&tab->philo[i]->thread, NULL, &life_loop, NULL) != 0)
+		tab->last_id = i + 1;
+		if (pthread_create(&tab->philo[i]->thread, NULL, &life_loop, tab) != 0)
 			return (error_free("Pthread create", tab), -1);
 		if (pthread_join(tab->philo[i]->thread, NULL) != 0)
 			return (error_free("Pthread join", tab), -1);
