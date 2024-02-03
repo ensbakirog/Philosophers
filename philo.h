@@ -10,6 +10,7 @@ typedef struct s_philo
 	int philo_eat;
 	int last_eat;
 	pthread_t thread;
+	struct s_table *table;
 }	t_philo;
 
 typedef struct s_table
@@ -20,9 +21,9 @@ typedef struct s_table
 	int		p_count;
 	int 	eating_count;
 	int		last_id;
-	t_philo **philo;
+	long long start_time;
+	t_philo *philo;
 	pthread_mutex_t mutex;
-	struct timeval time;
 }	t_table;
 
 int		ft_atoi(char *str);

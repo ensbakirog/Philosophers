@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include "philo.h"
-#include <stdlib.h>
 
 int	check_all(char **av, int count)
 {
@@ -46,29 +45,14 @@ int	ft_atoi(char *str)
 	return (num * sign);
 }
 
-int	ft_strlen(char *str)
+void	error_msg(char *str)
 {
-	int i;
+	size_t	i;
 
 	i = 0;
 	while (str[i])
 		i++;
-	return (i);
-}
-
-void	error_free(char *str, t_table *tab)
-{
-	int i;
-
-	i = -1;
-	while (++i < tab->p_count)
-	{
-		if (tab->philo[i])
-			free(tab->philo[i]);
-	}
-	if (tab->philo)
-		free(tab->philo);
-	write (2, "Error\n", 6);
-	write (2, str, ft_strlen(str));
-	write (2, "\n", 1);
+	write(2, "ERROR: ", 7);
+	write(2, str, i);
+	write(2, "\n", 1);
 }

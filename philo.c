@@ -4,52 +4,58 @@
 #include <sys/time.h>
 #include <stdio.h>
 
-long	get_time(t_table *tab);
-
-void	is_sleeping(t_table *tab)
+long long	get_time(void)
 {
-	long	time;
-
-	time = get_time(tab);
-	printf("%ld %d is sleeping\n", time, tab->last_id);
-	usleep(tab->sleeping_time);
+	long long time;
+	struct timeval watch;
+	if (gettimeofday(&watch, NULL) != 0)
+		return (-1);
+	time = watch.tv_sec * 1000;
+	return (time);
 }
 
-void * life_loop(void *arg)
+int	is_sleeping(t_philo *philo)
+{
+	long long time;
+	time = get_time();
+	if (time == -1)
+		return (-1);
+	printf("%lld %d is sleeping\n", time - philo->table->start_time, philo->philo_id);
+	usleep(philo->table->sleeping_time * 1000);
+	return (0);
+}
+
+void	*life_loop(void *arg)
 {
 	is_sleeping(arg);
 	return (NULL);
 }
-
-long	get_time(t_table *tab)
-{
-	long time;
-	if (gettimeofday(&tab->time, NULL) != 0)
-		return (error_free("Time error", tab), -1); 
-	time = tab->time.tv_sec;
-	return (time);
-}
-
 
 int create_philo(t_table *tab)
 {
 	int i;
 
 	i = -1;
-	tab->philo = (t_philo **)malloc(sizeof(t_philo *) * tab->p_count);
+	tab->philo = (t_philo *)malloc(sizeof(t_philo) * tab->p_count);
 	if (tab->philo == NULL)
-		return (error_free("Malloc error", tab), -1);
+		return (error_msg("Malloc Error"), -1);
+	while (++i < tab->p_count)
+		tab->philo[i].table = tab;
+	tab->start_time = get_time();
+	if (tab->start_time == -1)
+		return(error_msg("Time Error"), free(tab->philo), -1);
+	i = -1;
 	while (++i < tab->p_count)
 	{
-		tab->philo[i] = (t_philo *)malloc(sizeof(t_philo));
-		if (tab->philo[i] == NULL)
-			return (error_free("Malloc error", tab), -1);
-		tab->philo[i]->philo_id = i + 1;
-		tab->last_id = i + 1;
-		if (pthread_create(&tab->philo[i]->thread, NULL, &life_loop, tab) != 0)
-			return (error_free("Pthread create", tab), -1);
-		if (pthread_join(tab->philo[i]->thread, NULL) != 0)
-			return (error_free("Pthread join", tab), -1);
+		tab->philo[i].philo_id = i + 1;
+		if (pthread_create(&tab->philo[i].thread, NULL, &life_loop, &tab->philo[i]) != 0)
+			return (error_msg("Thread Create"), free(tab->philo), -1);
+	}
+	i = -1;
+	while (++i < tab->p_count)
+	{
+		if (pthread_join(tab->philo[i].thread, NULL) != 0)
+			return (error_msg("Thread Join"), free(tab->philo), -1);
 	}
 	return (0);
 }
@@ -72,11 +78,11 @@ int	main(int ac, char **av)
 	{
 		av++;
 		if (check_all(av, ac - 1) == -1)
-			return (error_free("Wrong argument", &tab), 1);
+			return (error_msg("Wrong Argument"), 1);
 		assign_arg(av, ac - 1, &tab);
 		if (create_philo(&tab) == -1)
 			return(1);
 		return (0);
 	}
-	return (error_free("Invalid argument", &tab), 1);
+	return (error_msg("Invalid Argument"), 1);
 }
