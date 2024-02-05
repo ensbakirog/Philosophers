@@ -4,7 +4,9 @@
 #include <sys/time.h>
 #include <stdio.h>
 
-int	take_right_fork(t_philo *philo)
+long long	get_time(void);
+
+int	take_forks(t_philo *philo)
 {
 	long long time;
 
@@ -16,7 +18,7 @@ int	take_right_fork(t_philo *philo)
 	time = get_time();
 	if (time == -1)
 		return (-1);
-	philo->other_fork = in_use;
+	*(philo->other_fork) = in_use;
 	printf("%lld %d has taken left fork\n", time - philo->table->start, philo->id);
 	return (0);
 }
@@ -38,7 +40,7 @@ void	create_fork(t_table *tab)
 int is_eating(t_philo *philo)
 {
 	long long time;
-	if (philo->self_fork == 1 && philo->other_fork == 1)
+	if (philo->self_fork == 1 && *philo->other_fork == 1)
 	{
 		take_forks(philo);
 		time = get_time();
@@ -46,8 +48,8 @@ int is_eating(t_philo *philo)
 			return (-1);
 		printf("%lld %d is eating\n", time - philo->table->start, philo->id);
 		usleep(philo->table->e_time * 1000);
-		return (0);
 	}
+	return (0);
 }
 
 long long	get_time(void)
@@ -73,8 +75,11 @@ int	is_sleeping(t_philo *philo)
 
 void	*life_loop(void *arg)
 {
+	while (1)
+	{
 	is_eating(arg);
 	is_sleeping(arg);
+	}
 	return (NULL);
 }
 
