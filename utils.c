@@ -1,5 +1,39 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ebakirog <ebakirog@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 22:40:56 by ebakirog          #+#    #+#             */
+/*   Updated: 2024/02/07 23:34:12 by ebakirog         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
+#include <sys/time.h>
 #include "philo.h"
+
+long long	get_time(void)
+{
+	long long	time;
+	struct timeval	watch;
+
+	if (gettimeofday(&watch, NULL) != 0)
+		return (-1);
+	time = watch.tv_sec * 1000;
+	return (time);
+}
+
+void	assign_arg(char **av, int count, t_table *tab)
+{
+	tab->p_count = ft_atoi(av[0]);
+	tab->d_time = ft_atoi(av[1]);
+	tab->e_time = ft_atoi(av[2]);
+	tab->s_time = ft_atoi(av[3]);
+	if (count == 5)
+		tab->e_count = ft_atoi(av[4]);
+}
 
 int	check_all(char **av, int count)
 {

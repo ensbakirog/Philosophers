@@ -1,7 +1,20 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ebakirog <ebakirog@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/02/07 22:41:15 by ebakirog          #+#    #+#              #
+#    Updated: 2024/02/07 23:15:27 by ebakirog         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME	:=	philo
 CC 		:=	gcc
 FLAGS 	:=	-Wall -Wextra -Werror
 SRC 	:=	philo.c\
+			life_loop.c\
 			utils.c
 OBJ		:= 	$(SRC:.c=.o)
 
@@ -29,7 +42,4 @@ fclean: clean
 
 re: fclean all
 
-norm:
-	@norminette $(SRC) philo.h
-
-.PHONY: all clean fclean re norm
+.PHONY: all clean fclean re
