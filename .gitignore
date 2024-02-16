@@ -3,3 +3,8 @@ a.out
 .vscode
 program
 a.out.dSYM
+life_loop.o
+philo
+philo.o
+utils.o
+philo.dSYM
