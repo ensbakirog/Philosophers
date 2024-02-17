@@ -12,7 +12,7 @@
 
 NAME	:=	philo
 CC 		:=	gcc
-FLAGS 	:=	-Wall -Wextra -Werror
+FLAGS 	:=	-Wall -Wextra -Werror -pthread
 SRC 	:=	philo.c\
 			life_loop.c\
 			utils.c
