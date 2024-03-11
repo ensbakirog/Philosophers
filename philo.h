@@ -13,13 +13,13 @@
 #ifndef PHILO_H
 # define PHILO_H
 
-# include <pthread.h>
+# define RESET "\033[0m"
+# define GREEN "\033[1;32m"
+# define WHITE "\033[1;37m"
+# define YELLOW "\033[1;3;33m"
 
-typedef enum s_fork
-{
-	available,
-	in_use
-}					t_fork;
+# include <pthread.h>
+# include <stdbool.h>
 
 typedef struct s_philo
 {
@@ -27,8 +27,8 @@ typedef struct s_philo
 	int				eat;
 	pthread_t		thread;
 	struct s_table	*table;
-	t_fork			self_fork;
-	t_fork			*other_fork;
+	bool			self_fork;
+	bool 			*other_fork;
 }					t_philo;
 
 typedef struct s_table
@@ -45,11 +45,10 @@ typedef struct s_table
 
 int					ft_atoi(char *str);
 void				error_msg(char *str);
-void				free_table(t_table *tab);
 int					check_all(char **av, int count);
 void				assign_arg(char **av, int count, t_table *tab);
 long long			get_time(void);
-void				create_fork(t_table *tab);
 int					is_eating(t_philo *philo);
 int					is_sleeping(t_philo *philo);
+int 				is_thinking(t_philo *philo);
 #endif

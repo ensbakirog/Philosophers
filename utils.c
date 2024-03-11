@@ -20,8 +20,8 @@ long long	get_time(void)
 	struct timeval	watch;
 
 	if (gettimeofday(&watch, NULL) != 0)
-		return (-1);
-	time = watch.tv_sec * 1000;
+		return (error_msg("Time Error"), -1);
+	time = (watch.tv_sec * 1000) + (watch.tv_usec / 1000);
 	return (time);
 }
 
